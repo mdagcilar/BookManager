@@ -31,9 +31,8 @@ public class BookManager {
      * Iterates through a file and inserts a word (Key) with a counter
      *
      * @param filePath - path to the file
-     * @return HashMap containing the words
      */
-    private HashMap<String, Integer> populateWordsHashMap(String filePath) {
+    private void populateWordsHashMap(String filePath) {
         BufferedReader bufferedReader;
 
         try {
@@ -50,7 +49,6 @@ public class BookManager {
                     }
                 }
             }
-            return wordsHashMap;
         } catch (FileNotFoundException e) {
             //TODO: throw useful exception
             System.out.println("File not found exception " + e.getMessage());
@@ -58,7 +56,6 @@ public class BookManager {
             //TODO: throw useful exception
             System.out.println(e.getMessage());
         }
-        return null;
     }
 
     /**
