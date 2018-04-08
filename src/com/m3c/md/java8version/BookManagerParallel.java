@@ -1,18 +1,12 @@
 package com.m3c.md.java8version;
 
+import com.m3c.md.controller.BookManager;
 import com.m3c.md.view.DisplayManager;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
-public class BookManagerParallel {
+public class BookManagerParallel implements BookManager {
 
     private ConcurrentHashMap<String, Integer> wordsHashMap = new ConcurrentHashMap<String, Integer>();
 
@@ -21,13 +15,15 @@ public class BookManagerParallel {
      *
      * @param filePath - path to the file
      */
-    public void findTopThreeWordsParallel(String filePath) {
+    public void findTopThreeWords(String filePath) {
         long populateTimeStart = Instant.now().toEpochMilli();
        // wordsHashMap = readFile(filePath);
         long populateTimeEnd = Instant.now().toEpochMilli();
 
         DisplayManager.printTopThreeWords(wordsHashMap, (populateTimeEnd - populateTimeStart));
     }
+
+
 //
 //    private ConcurrentHashMap<String, Integer> readFile(String filePath) {
 //        Path path = Paths.get(filePath);

@@ -19,7 +19,7 @@ public class DisplayManager {
      *
      * @param hashMap - the HashMap containing words and their counts.
      */
-    public static void printTopThreeWords(HashMap<String, Integer> hashMap, long populateTime) {
+    public static void printTopThreeWords(Map<String, Integer> hashMap, long populateTime) {
         long filterTimeStart = Instant.now().toEpochMilli();
 
         List<Map.Entry<String, Integer>> top3words = hashMap.entrySet().stream()
@@ -42,32 +42,32 @@ public class DisplayManager {
     }
 
 
-    /**
-     * Prints to standard output the top 3 occurring words
-     *
-     * @param hashMap - the HashMap containing words and their counts.
-     */
-    public static void printTopThreeWords(ConcurrentHashMap<String, Integer> hashMap, long populateTime) {
-        long filterTimeStart = Instant.now().toEpochMilli();
-
-        List<Map.Entry<String, Integer>> top3words = hashMap.entrySet().stream()
-                .sorted(Comparator.comparing(Map.Entry::getValue, reverseOrder()))
-                .limit(3)
-                .collect(Collectors.toList());
-
-        long filterTimeEnd = Instant.now().toEpochMilli();
-        long totalTime = populateTime + (filterTimeEnd - filterTimeStart);
-
-        System.out.println("Time taken to populate HashMap with all words: " + populateTime);
-        System.out.println("Time taken to get the top 3 words: " + (filterTimeEnd - filterTimeStart));
-
-        System.out.println("Total time taken: " + totalTime);
-
-        System.out.println("\nThe top 3 words: ");
-        for (Map.Entry entry : top3words) {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
-        }
-    }
+//    /**
+//     * Prints to standard output the top 3 occurring words
+//     *
+//     * @param hashMap - the HashMap containing words and their counts.
+//     */
+//    public static void printTopThreeWords(Map<String, Integer> hashMap, long populateTime) {
+//        long filterTimeStart = Instant.now().toEpochMilli();
+//
+//        List<Map.Entry<String, Integer>> top3words = hashMap.entrySet().stream()
+//                .sorted(Comparator.comparing(Map.Entry::getValue, reverseOrder()))
+//                .limit(3)
+//                .collect(Collectors.toList());
+//
+//        long filterTimeEnd = Instant.now().toEpochMilli();
+//        long totalTime = populateTime + (filterTimeEnd - filterTimeStart);
+//
+//        System.out.println("Time taken to populate HashMap with all words: " + populateTime);
+//        System.out.println("Time taken to get the top 3 words: " + (filterTimeEnd - filterTimeStart));
+//
+//        System.out.println("Total time taken: " + totalTime);
+//
+//        System.out.println("\nThe top 3 words: ");
+//        for (Map.Entry entry : top3words) {
+//            System.out.println(entry.getKey() + " -> " + entry.getValue());
+//        }
+//    }
 
     /**
      * Prints to standard output the contents of a file
@@ -91,5 +91,9 @@ public class DisplayManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void displayExceptionMessage(String message) {
+        System.out.println(message);
     }
 }
