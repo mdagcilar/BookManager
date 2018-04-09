@@ -1,6 +1,6 @@
-package com.m3c.md.preprocessing;
+package com.m3c.md.model.preprocessing;
 
-import com.m3c.md.controller.BookManager;
+import com.m3c.md.model.BookManager;
 import edu.stanford.nlp.ling.DocumentReader;
 
 import java.io.BufferedReader;

@@ -1,4 +1,4 @@
-package com.m3c.md.controller;
+package com.m3c.md.model;
 
 /**
  * SortManagerException
@@ -10,7 +10,7 @@ package com.m3c.md.controller;
 
 public class BookManagerException extends Exception {
 
-    BookManagerException(String message) {
+    public BookManagerException(String message) {
         super(message);
     }
 }

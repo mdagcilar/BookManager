@@ -1,4 +1,4 @@
-package com.m3c.md.controller;
+package com.m3c.md.model;
 
 import com.m3c.md.view.DisplayManager;
 
@@ -17,6 +17,7 @@ import java.util.Map;
 
 public class BookManagerImpl implements BookManager {
 
+    private static final String FILE_NOT_FOUND = "File not found";
     private Map<String, Integer> wordsHashMap = new HashMap<>();
 
     /**
@@ -26,7 +27,14 @@ public class BookManagerImpl implements BookManager {
      */
     public void findTopThreeWords(String filePath) {
         long populateTimeStart = Instant.now().toEpochMilli();
-        populateWordsHashMap(filePath);
+
+        try {
+            populateWordsHashMap(filePath);
+        } catch (BookManagerException e) {
+            DisplayManager.displayExceptionMessage(e.getMessage());
+            System.exit(1);
+        }
+
         long populateTimeEnd = Instant.now().toEpochMilli();
 
         DisplayManager.printTopThreeWords(wordsHashMap, (populateTimeEnd - populateTimeStart), true);
@@ -37,7 +45,7 @@ public class BookManagerImpl implements BookManager {
      *
      * @param filePath - path to the file
      */
-    private void populateWordsHashMap(String filePath) {
+    private void populateWordsHashMap(String filePath) throws BookManagerException {
         BufferedReader bufferedReader;
 
         try {
@@ -54,10 +62,8 @@ public class BookManagerImpl implements BookManager {
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
-            DisplayManager.displayExceptionMessage("File not found exception: " + e.getMessage());
         } catch (IOException e) {
-            DisplayManager.displayExceptionMessage("IOException: " + e.getMessage());
+            throw new BookManagerException(FILE_NOT_FOUND + " :" + e.getMessage());
         }
     }
 

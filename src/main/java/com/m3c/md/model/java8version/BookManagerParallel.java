@@ -1,6 +1,7 @@
-package com.m3c.md.java8version;
+package com.m3c.md.model.java8version;
 
-import com.m3c.md.controller.BookManager;
+import com.m3c.md.model.BookManager;
+import com.m3c.md.model.BookManagerException;
 import com.m3c.md.view.DisplayManager;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 public class BookManagerParallel implements BookManager {
 
+    private static final String FILE_NOT_FOUND = "File not found";
     private Map<String, Integer> wordCountMap = new ConcurrentHashMap<>();
 
     /**
@@ -33,7 +35,14 @@ public class BookManagerParallel implements BookManager {
      */
     public void findTopThreeWords(String filePath) {
         long populateTimeStart = Instant.now().toEpochMilli();
-        wordCountMap = readFile(filePath);
+
+        try {
+            wordCountMap = readFile(filePath);
+        } catch (BookManagerException e) {
+            DisplayManager.displayExceptionMessage(e.getMessage());
+            System.exit(1);
+        }
+
         long populateTimeEnd = Instant.now().toEpochMilli();
 
         DisplayManager.printTopThreeWords(wordCountMap, (populateTimeEnd - populateTimeStart), false);
@@ -47,7 +56,7 @@ public class BookManagerParallel implements BookManager {
      * @param filePath - path to the file
      * @return HashMap of <Word, Count>
      */
-    private Map<String, Integer> readFile(String filePath) {
+    private Map<String, Integer> readFile(String filePath) throws BookManagerException {
         Path path = Paths.get(filePath);
 
         try {
@@ -56,14 +65,11 @@ public class BookManagerParallel implements BookManager {
                             .parallel()                                         // Returns an equivalent stream that is parallel
                             .map(line -> line.toLowerCase().replaceAll("[^a-z]+", " "))  // replace everything that isn't a word, with the empty space
                             .flatMap(Pattern.compile("\\s+")::splitAsStream)    // Splits the line by spaces, into words
-                            // Creates a stream from the given input sequence " " around matches of this pattern.
                             .collect(Collectors.groupingBy(w -> w,              // group words by their occurrence and store their count
                                     Collectors.summingInt(w -> 1)));
-        } catch (
-                IOException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new BookManagerException(FILE_NOT_FOUND + " :" +  e.getMessage());
         }
-        return null;
     }
 
 
@@ -71,10 +77,10 @@ public class BookManagerParallel implements BookManager {
      * TODO: currently runs out of heap space on aLargeFile
      * readAllLines() and parallelStream() are the causes of the heap space running out
      *
-     * @param filePath
+     * @param filePath - path to file
      * @return
      */
-    private Map<String, Integer> readFile_2(String filePath) {
+    private Map<String, Integer> readFile_2(String filePath) throws BookManagerException {
         Path path = Paths.get(filePath);
 
         try {
@@ -94,8 +100,7 @@ public class BookManagerParallel implements BookManager {
                     });
             return wordCountMap;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new BookManagerException(FILE_NOT_FOUND);
         }
-        return null;
     }
 }
