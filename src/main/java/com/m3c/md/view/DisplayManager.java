@@ -67,7 +67,7 @@ public class DisplayManager {
         }
     }
 
-    public void displayExceptionMessage(String message) {
+    public static void displayExceptionMessage(String message) {
         System.out.println(message);
     }
 

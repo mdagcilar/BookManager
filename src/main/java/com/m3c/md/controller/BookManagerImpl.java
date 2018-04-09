@@ -18,7 +18,6 @@ import java.util.Map;
 public class BookManagerImpl implements BookManager {
 
     private Map<String, Integer> wordsHashMap = new HashMap<>();
-    private DisplayManager displayManager = new DisplayManager();
 
     /**
      * Finds the top 3 words in a txt file.
@@ -56,9 +55,9 @@ public class BookManagerImpl implements BookManager {
                 }
             }
         } catch (FileNotFoundException e) {
-            displayManager.displayExceptionMessage("File not found exception: " + e.getMessage());
+            DisplayManager.displayExceptionMessage("File not found exception: " + e.getMessage());
         } catch (IOException e) {
-            displayManager.displayExceptionMessage("IOException: " + e.getMessage());
+            DisplayManager.displayExceptionMessage("IOException: " + e.getMessage());
         }
     }
 

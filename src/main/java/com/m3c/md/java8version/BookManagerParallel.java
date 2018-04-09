@@ -9,9 +9,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class BookManagerParallel implements BookManager {
 
-    private Map<String, Integer> wordsHashMap = new ConcurrentHashMap<>();
+    private Map<String, Integer> wordCountMap = new ConcurrentHashMap<>();
 
     /**
      * Finds the top 3 words in a txt file.
@@ -33,61 +33,66 @@ public class BookManagerParallel implements BookManager {
      */
     public void findTopThreeWords(String filePath) {
         long populateTimeStart = Instant.now().toEpochMilli();
-        wordsHashMap = readFile(filePath);
+        wordCountMap = readFile(filePath);
         long populateTimeEnd = Instant.now().toEpochMilli();
 
-        DisplayManager.printTopThreeWords(wordsHashMap, (populateTimeEnd - populateTimeStart), false);
+        DisplayManager.printTopThreeWords(wordCountMap, (populateTimeEnd - populateTimeStart), false);
+    }
+
+    /**
+     * @param filePath - path to the file
+     * @return
+     */
+    private Map<String, Integer> readFile(String filePath) {
+        Path path = Paths.get(filePath);
+
+        try {
+            return wordCountMap =
+                    Files.lines(path, StandardCharsets.ISO_8859_1)              // Read all lines from a file as a Stream.
+                            .parallel()                                         // Returns an equivalent stream that is parallel
+                            .map(line -> line.toLowerCase().replaceAll("[^a-z]+", " "))  // replace everything that isn't a word, with the empty space
+                            .flatMap(Pattern.compile("\\s+")::splitAsStream)
+                            .collect(Collectors.groupingBy(w -> w,
+                                    Collectors.summingInt(w -> 1)));
+        } catch (
+                IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
-    private Map<String, Integer> readFile(String filePath) {
+    /**
+     * TODO: currently runs out of heap space on aLargeFile
+     * @param filePath
+     * @return
+     */
+    private Map<String, Integer> readFile_2(String filePath) {
         Path path = Paths.get(filePath);
 
         try {
             Files.readAllLines(path, StandardCharsets.ISO_8859_1)
                     .parallelStream()                                                               // Start streaming the lines
-                    .map(line -> line.toLowerCase().replaceAll("[^a-z]+", " "))                     // Split line into individual words
-                    .collect(Collectors.toConcurrentMap(line -> line, count -> 1, Integer::sum))    // Convert stream of String[] to stream of String
+                    .map(line -> line.toLowerCase().replaceAll("[^a-z]+", " "))   // Split line into individual words
+                    .collect(Collectors.toConcurrentMap(line -> line, count -> 1, Integer::sum))
                     .forEach((line, count) -> {
                         String[] wordsFromLine = line.split("\\s");
                         for (String word : wordsFromLine) {
-                            if (wordsHashMap.containsKey(word)) {
-                                wordsHashMap.put(word, wordsHashMap.get(word) + 1);     // get word and increment counter
+                            if (wordCountMap.containsKey(word)) {
+                                wordCountMap.put(word, wordCountMap.get(word) + 1);                 // get word and increment counter
                             } else {
-                                wordsHashMap.put(word, 1);                              // insert new word into the HashMap
+                                wordCountMap.put(word, 1);                                          // insert new word into the HashMap
                             }
                         }
                     });
-            return wordsHashMap;
+            return wordCountMap;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-//    private Map<String, Integer> readFile_2(String filePath) {
-//        Path path = Paths.get(filePath);
-//
-//        try {
-//            Files.readAllLines(path, StandardCharsets.ISO_8859_1)
-//                    .parallelStream()                                                               // Start streaming the lines
-//                    .map(line -> line.toLowerCase().replaceAll("[^a-z]+", ""))    // Split line into individual words
-//                    .flatMap(Arrays::stream)                                                        // Convert stream of String[] to stream of String
-//                    .parallel()                                                                     // convert to parallel stream
-//                    .forEach(word -> {
-//                        if (wordsHashMap.containsKey(word))
-//                            wordsHashMap.put(word, wordsHashMap.get(word) + 1);                    // get word and increment counter
-//                        wordsHashMap.put(word, 1);                                                 // insert new word into the HashMap
-//                    });
-//            return wordsHashMap;
-//        } catch (
-//                IOException e)
-//
-//        {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+
 }
 
 
