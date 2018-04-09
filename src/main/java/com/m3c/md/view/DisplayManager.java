@@ -19,6 +19,7 @@ import static java.util.Collections.reverseOrder;
 
 public class DisplayManager {
 
+    private PrintStream printStream;
 
     /**
      * Prints the top 3 occurring words in a file.
@@ -27,7 +28,7 @@ public class DisplayManager {
      * @param populateTime     - time taken to populate the HashMap
      * @param outResultsToFile - flag, whether to print output to a file
      */
-    public static void printTopThreeWords(Map<String, Integer> hashMap, long populateTime, boolean outResultsToFile) {
+    public void printTopThreeWords(Map<String, Integer> hashMap, long populateTime, boolean outResultsToFile) {
         if (outResultsToFile) changeOutputStreamToFile();
 
         long filterTimeStart = Instant.now().toEpochMilli();
@@ -55,19 +56,22 @@ public class DisplayManager {
     /**
      * Changes the PrintStream to a file, to allow ease saving of results
      */
-    private static void changeOutputStreamToFile() {
-        PrintStream out;
+    private void changeOutputStreamToFile() {
+        if (printStream != null) {
+            return;
+        }
+
         String fileOutput = "resources/output.txt";
         try {
-            out = new PrintStream(new FileOutputStream(fileOutput), true);
-            System.setOut(out);
+            printStream = new PrintStream(new FileOutputStream(fileOutput), true);
+            System.setOut(printStream);
         } catch (FileNotFoundException e) {
             System.out.println(fileOutput + " not found " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public static void displayExceptionMessage(String message) {
+    public void displayExceptionMessage(String message) {
         System.out.println(message);
     }
 

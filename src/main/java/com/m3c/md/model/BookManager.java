@@ -1,5 +1,7 @@
 package com.m3c.md.model;
 
+import java.util.Map;
+
 /**
  * BookManager interface
  *
@@ -10,5 +12,5 @@ package com.m3c.md.model;
 
 public interface BookManager {
 
-    void findTopThreeWords(String exampleFile);
+    void findTopThreeWords(String exampleFile) throws BookManagerException;
 }

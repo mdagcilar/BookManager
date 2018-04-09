@@ -1,8 +1,7 @@
-package com.m3c.md.model.java8version;
+package com.m3c.md.model;
 
-import com.m3c.md.model.BookManager;
-import com.m3c.md.model.BookManagerException;
 import com.m3c.md.view.DisplayManager;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -25,27 +24,26 @@ import java.util.stream.Collectors;
 
 public class BookManagerParallel implements BookManager {
 
-    private static final String FILE_NOT_FOUND = "File not found";
-    private Map<String, Integer> wordCountMap = new ConcurrentHashMap<>();
+    private static org.apache.log4j.Logger logger = Logger.getLogger(BookManagerParallel.class);
+    private static final String FILE_NOT_FOUND = "File not found ";
+
+    private Map<String, Integer> wordCountMap;
+    private DisplayManager displayManager = new DisplayManager();
 
     /**
      * Finds the top 3 words in a txt file.
      *
      * @param filePath - path to the file
      */
-    public void findTopThreeWords(String filePath) {
+    public void findTopThreeWords(String filePath) throws BookManagerException {
         long populateTimeStart = Instant.now().toEpochMilli();
 
-        try {
-            wordCountMap = readFile(filePath);
-        } catch (BookManagerException e) {
-            DisplayManager.displayExceptionMessage(e.getMessage());
-            System.exit(1);
-        }
+        wordCountMap = new ConcurrentHashMap<>();
+        wordCountMap = readFile(filePath);
 
         long populateTimeEnd = Instant.now().toEpochMilli();
 
-        DisplayManager.printTopThreeWords(wordCountMap, (populateTimeEnd - populateTimeStart), false);
+        displayManager.printTopThreeWords(wordCountMap, (populateTimeEnd - populateTimeStart), false);
     }
 
     /**
@@ -54,7 +52,7 @@ public class BookManagerParallel implements BookManager {
      * splits the line into words, then groups by their occurrence.
      *
      * @param filePath - path to the file
-     * @return HashMap of <Word, Count>
+     * @return Map of <Word, Count>
      */
     private Map<String, Integer> readFile(String filePath) throws BookManagerException {
         Path path = Paths.get(filePath);
@@ -68,17 +66,21 @@ public class BookManagerParallel implements BookManager {
                             .collect(Collectors.groupingBy(w -> w,              // group words by their occurrence and store their count
                                     Collectors.summingInt(w -> 1)));
         } catch (IOException e) {
-            throw new BookManagerException(FILE_NOT_FOUND + " :" +  e.getMessage());
+            logger.error(FILE_NOT_FOUND + "'" + e.getMessage() + "'");
+            throw new BookManagerException(FILE_NOT_FOUND + " :" + e.getMessage());
         }
     }
 
 
     /**
      * TODO: currently runs out of heap space on aLargeFile
-     * readAllLines() and parallelStream() are the causes of the heap space running out
+     * readAllLines() and parallelStream() are the causes of the heap space running out of memory. Changing
+     * Files.readAllLines to Files.lines() and parallelStream to parallel fixes the heap space issue but slows
+     * down the execution time to over 90 seconds. Which is longer than my implementation without using streams.
+     * Quickest run-time currently is 49 seconds using the above method readFile()
      *
      * @param filePath - path to file
-     * @return
+     * @return Map of <Word, Count>
      */
     private Map<String, Integer> readFile_2(String filePath) throws BookManagerException {
         Path path = Paths.get(filePath);
@@ -100,7 +102,8 @@ public class BookManagerParallel implements BookManager {
                     });
             return wordCountMap;
         } catch (IOException e) {
-            throw new BookManagerException(FILE_NOT_FOUND);
+            logger.error(FILE_NOT_FOUND + e.getMessage());
+            throw new BookManagerException(FILE_NOT_FOUND + " :" + e.getMessage());
         }
     }
 }

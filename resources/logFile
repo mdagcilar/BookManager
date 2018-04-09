@@ -1,0 +1,13 @@
+09-04-2018 23:09:04 ERROR [main] BookManagerImpl - File not foundnosuchfile (The system cannot find the file specified)
+09-04-2018 23:12:11 INFO [main] BookManagerImplTest - Begin running tests
+09-04-2018 23:12:11 ERROR [main] BookManagerImpl - File not foundnosuchfile (The system cannot find the file specified)
+09-04-2018 23:12:11 INFO [main] BookManagerImplTest - Tests have finished
+09-04-2018 23:14:01 INFO [main] BookManagerParallelTest - Begin running tests
+09-04-2018 23:14:01 ERROR [main] BookManagerParallel - File not foundnosuchfile
+09-04-2018 23:14:01 INFO [main] BookManagerParallelTest - Tests have finished
+W09-04-2018 23:17:53 INFO [main] BookManagerParallelTest - Begin running tests
+09-04-2018 23:17:53 ERROR [main] BookManagerParallel - File not found nosuchfile
+09-04-2018 23:17:54 INFO [main] BookManagerParallelTest - Tests have finished
+09-04-2018 23:19:26 INFO [main] BookManagerParallelTest - Begin running tests
+09-04-2018 23:19:26 ERROR [main] BookManagerParallel - File not found 'nosuchfile'
+09-04-2018 23:19:26 INFO [main] BookManagerParallelTest - Tests have finished

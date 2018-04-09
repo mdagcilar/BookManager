@@ -1,6 +1,7 @@
 package com.m3c.md.model;
 
 import com.m3c.md.view.DisplayManager;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.time.Instant;
@@ -18,26 +19,25 @@ import java.util.Map;
 public class BookManagerImpl implements BookManager {
 
     private static final String FILE_NOT_FOUND = "File not found";
-    private Map<String, Integer> wordsHashMap = new HashMap<>();
+    private static org.apache.log4j.Logger logger = Logger.getLogger(BookManagerImpl.class);
+
+    private Map<String, Integer> wordsHashMap;
+    private DisplayManager displayManager = new DisplayManager();
 
     /**
      * Finds the top 3 words in a txt file.
      *
      * @param filePath - path to the file
      */
-    public void findTopThreeWords(String filePath) {
+    public void findTopThreeWords(String filePath) throws BookManagerException {
         long populateTimeStart = Instant.now().toEpochMilli();
 
-        try {
-            populateWordsHashMap(filePath);
-        } catch (BookManagerException e) {
-            DisplayManager.displayExceptionMessage(e.getMessage());
-            System.exit(1);
-        }
+        wordsHashMap = new HashMap<>();
+        wordsHashMap = readFile(filePath);
 
         long populateTimeEnd = Instant.now().toEpochMilli();
 
-        DisplayManager.printTopThreeWords(wordsHashMap, (populateTimeEnd - populateTimeStart), true);
+        displayManager.printTopThreeWords(wordsHashMap, (populateTimeEnd - populateTimeStart), true);
     }
 
     /**
@@ -45,11 +45,11 @@ public class BookManagerImpl implements BookManager {
      *
      * @param filePath - path to the file
      */
-    private void populateWordsHashMap(String filePath) throws BookManagerException {
-        BufferedReader bufferedReader;
+    private Map<String, Integer> readFile(String filePath) throws BookManagerException {
 
         try {
-            bufferedReader = new BufferedReader(new FileReader(filePath));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath));
+            logger.debug("BufferedReader stream open for: " + filePath);
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -62,7 +62,11 @@ public class BookManagerImpl implements BookManager {
                     }
                 }
             }
+            bufferedReader.close();
+            logger.debug("BufferedReader stream closed for: " + filePath);
+            return wordsHashMap;
         } catch (IOException e) {
+            logger.error(FILE_NOT_FOUND + e.getMessage());
             throw new BookManagerException(FILE_NOT_FOUND + " :" + e.getMessage());
         }
     }
