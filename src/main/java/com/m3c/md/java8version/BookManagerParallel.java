@@ -40,8 +40,12 @@ public class BookManagerParallel implements BookManager {
     }
 
     /**
+     * Reads all lines from a file as a stream in parallel.
+     * Excludes everything that isn't a string of characters a-z
+     * splits the line into words, then groups by their occurrence.
+     *
      * @param filePath - path to the file
-     * @return
+     * @return HashMap of <Word, Count>
      */
     private Map<String, Integer> readFile(String filePath) {
         Path path = Paths.get(filePath);
@@ -51,8 +55,9 @@ public class BookManagerParallel implements BookManager {
                     Files.lines(path, StandardCharsets.ISO_8859_1)              // Read all lines from a file as a Stream.
                             .parallel()                                         // Returns an equivalent stream that is parallel
                             .map(line -> line.toLowerCase().replaceAll("[^a-z]+", " "))  // replace everything that isn't a word, with the empty space
-                            .flatMap(Pattern.compile("\\s+")::splitAsStream)
-                            .collect(Collectors.groupingBy(w -> w,
+                            .flatMap(Pattern.compile("\\s+")::splitAsStream)    // Splits the line by spaces, into words
+                            // Creates a stream from the given input sequence " " around matches of this pattern.
+                            .collect(Collectors.groupingBy(w -> w,              // group words by their occurrence and store their count
                                     Collectors.summingInt(w -> 1)));
         } catch (
                 IOException e) {
@@ -64,6 +69,8 @@ public class BookManagerParallel implements BookManager {
 
     /**
      * TODO: currently runs out of heap space on aLargeFile
+     * readAllLines() and parallelStream() are the causes of the heap space running out
+     *
      * @param filePath
      * @return
      */
@@ -91,9 +98,4 @@ public class BookManagerParallel implements BookManager {
         }
         return null;
     }
-
-
 }
-
-
-
