@@ -12,7 +12,7 @@ Access
 Array
 Stack
 Queue
-Singly
+Singly hi
 Doubly
 Skip List
 Hash Table

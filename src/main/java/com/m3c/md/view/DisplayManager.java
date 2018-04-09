@@ -53,7 +53,7 @@ public class DisplayManager {
 
 
     /**
-     * Changes the PrintStream to a file, to allow easying saving of results
+     * Changes the PrintStream to a file, to allow ease saving of results
      */
     private static void changeOutputStreamToFile() {
         PrintStream out;
