@@ -3,24 +3,23 @@ package com.m3c.md.controller;
 import com.m3c.md.model.BookManager;
 import com.m3c.md.model.BookManagerException;
 import com.m3c.md.model.BookManagerImpl;
-import com.m3c.md.model.BookManagerParallel;
-import com.m3c.md.model.preprocessing.BookManagerPreprocessed;
+import com.m3c.md.model.Constants;
 import com.m3c.md.view.DisplayManager;
+import org.apache.log4j.PropertyConfigurator;
 
 public class Starter {
 
-    private static final String EXAMPLE_FILE = "resources/example.txt";
-    private static final String TURING = "resources/turing.txt";
-    private static final String A_LARGE_FILE = "resources/aLargeFile";
-    private DisplayManager displayManager = new DisplayManager();
-
-
     public static void main(String[] args) {
         Starter starter = new Starter();
+        initialiseLogger();
 
-//        starter.runBookManagerImpl();
+        starter.runBookManagerImpl();
 //        starter.parallelVersion();
 //        starter.preprocessedVersion();
+    }
+
+    public static void initialiseLogger(){
+        PropertyConfigurator.configure(Constants.LOG_PROPERTIES_FILE);
     }
 
     // Normal version using a BufferedReader
@@ -31,9 +30,9 @@ public class Starter {
         for (int i = 0; i < 20; i++) {
             System.out.println(i);
             try {
-                bookManagerImpl.findTopThreeWords(TURING);
+                bookManagerImpl.getTopThreeWords(Constants.TURING_FILE);
             } catch (BookManagerException e) {
-                displayManager.displayExceptionMessage(e.getMessage());
+                DisplayManager.displayExceptionMessage(e.getMessage());
                 System.exit(1);
             }
         }
@@ -46,7 +45,7 @@ public class Starter {
 //        //Run process and store results in a file
 //        for (int i = 0; i < 20; i++) {
 //            System.out.println(i);
-//            bookManagerParallel.findTopThreeWords(TURING);
+//            bookManagerParallel.getTopThreeWords(Constants.TURING_FILE);
 //        }
 //    }
 //
@@ -57,7 +56,9 @@ public class Starter {
 //        //Run process and store results in a file
 //        for (int i = 0; i < 20; i++) {
 //            System.out.println(i);
-//            bookManagerPreprocessed.findTopThreeWords(TURING);
+//            bookManagerPreprocessed.getTopThreeWords(Constants.TURING_FILE);
 //        }
 //    }
+
+
 }
