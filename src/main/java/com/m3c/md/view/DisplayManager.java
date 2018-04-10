@@ -34,7 +34,9 @@ public class DisplayManager {
 
         if (outResultsToFile) changeOutputStreamToFile();
 
-        System.out.println("Total time taken: (" + totalTime + "ms), populate the HashMap (" + populateTime + "ms), " +
+        System.out.println("" +
+                "Total time taken: (" + totalTime + "ms), " +
+                "populate the HashMap (" + populateTime + "ms), " +
                 "get the top 3 words (" + filterTime + "ms)");
         System.out.println("The top 3 words: ");
 
