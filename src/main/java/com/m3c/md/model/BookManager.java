@@ -1,5 +1,6 @@
 package com.m3c.md.model;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,5 +13,5 @@ import java.util.Map;
 
 public interface BookManager {
 
-    void findTopThreeWords(String exampleFile) throws BookManagerException;
+    List<Map.Entry<String, Integer>> getTopThreeWords(String exampleFile) throws BookManagerException;
 }

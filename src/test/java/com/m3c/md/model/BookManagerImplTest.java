@@ -8,7 +8,6 @@ import org.junit.Test;
 public class BookManagerImplTest {
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(BookManagerImplTest.class);
-    private static final String TURING = "resources/turing.txt";
 
     @BeforeClass
     public static void setup(){
@@ -23,13 +22,13 @@ public class BookManagerImplTest {
     @Test
     public void findTopThreeWords() throws BookManagerException {
         BookManager bookManager = new BookManagerImpl();
-        bookManager.findTopThreeWords(TURING);
+        bookManager.getTopThreeWords(Constants.TURING_FILE);
     }
 
     @Test(expected = BookManagerException.class)
     public void fileDoesNotExist() throws BookManagerException {
         BookManager bookManager = new BookManagerImpl();
-        bookManager.findTopThreeWords("nosuchfile");
+        bookManager.getTopThreeWords("nosuchfile");
     }
 
 

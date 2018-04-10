@@ -6,12 +6,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class BookManagerParallelTest {
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(BookManagerParallelTest.class);
-    private static final String TURING = "resources/turing.txt";
 
     private BookManager bookManagerParallel;
 
@@ -32,11 +29,11 @@ public class BookManagerParallelTest {
 
     @Test
     public void findTopThreeWords() throws BookManagerException {
-        bookManagerParallel.findTopThreeWords(TURING);
+        bookManagerParallel.getTopThreeWords(Constants.TURING_FILE);
     }
 
     @Test(expected = BookManagerException.class)
     public void fileDoesNotExist() throws BookManagerException {
-        bookManagerParallel.findTopThreeWords("nosuchfile");
+        bookManagerParallel.getTopThreeWords("nosuchfile");
     }
 }

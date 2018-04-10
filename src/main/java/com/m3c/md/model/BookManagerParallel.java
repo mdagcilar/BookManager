@@ -9,10 +9,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.reverseOrder;
 
 /**
  * BookManagerParallel
@@ -25,7 +29,6 @@ import java.util.stream.Collectors;
 public class BookManagerParallel implements BookManager {
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(BookManagerParallel.class);
-    private static final String FILE_NOT_FOUND = "File not found ";
 
     private Map<String, Integer> wordCountMap;
     private DisplayManager displayManager = new DisplayManager();
@@ -35,15 +38,25 @@ public class BookManagerParallel implements BookManager {
      *
      * @param filePath - path to the file
      */
-    public void findTopThreeWords(String filePath) throws BookManagerException {
+    public List<Map.Entry<String, Integer>> getTopThreeWords(String filePath) throws BookManagerException {
         long populateTimeStart = Instant.now().toEpochMilli();
-
-        wordCountMap = new ConcurrentHashMap<>();
+        wordCountMap = new HashMap<>();
         wordCountMap = readFile(filePath);
-
         long populateTimeEnd = Instant.now().toEpochMilli();
 
-        displayManager.printTopThreeWords(wordCountMap, (populateTimeEnd - populateTimeStart), false);
+        long filterTimeStart = Instant.now().toEpochMilli();
+        List<Map.Entry<String, Integer>> topThreeWordsList = wordCountMap.entrySet().stream()
+                .sorted(Comparator.comparing(Map.Entry::getValue, reverseOrder()))
+                .limit(3)
+                .collect(Collectors.toList());
+
+        long filterTimeEnd = Instant.now().toEpochMilli();
+
+        long totalTime = (populateTimeEnd - populateTimeStart) + (filterTimeEnd - filterTimeStart);
+        displayManager.printTopThreeWords(topThreeWordsList, totalTime,
+                (filterTimeStart - filterTimeEnd), (populateTimeStart - populateTimeEnd), true);
+
+        return topThreeWordsList;
     }
 
     /**
@@ -66,8 +79,8 @@ public class BookManagerParallel implements BookManager {
                             .collect(Collectors.groupingBy(w -> w,              // group words by their occurrence and store their count
                                     Collectors.summingInt(w -> 1)));
         } catch (IOException e) {
-            logger.error(FILE_NOT_FOUND + "'" + e.getMessage() + "'");
-            throw new BookManagerException(FILE_NOT_FOUND + " :" + e.getMessage());
+            logger.error(Constants.FILE_NOT_FOUND + "'" + e.getMessage() + "'");
+            throw new BookManagerException(Constants.FILE_NOT_FOUND + " :" + e.getMessage());
         }
     }
 
@@ -102,8 +115,8 @@ public class BookManagerParallel implements BookManager {
                     });
             return wordCountMap;
         } catch (IOException e) {
-            logger.error(FILE_NOT_FOUND + e.getMessage());
-            throw new BookManagerException(FILE_NOT_FOUND + " :" + e.getMessage());
+            logger.error(Constants.FILE_NOT_FOUND + e.getMessage());
+            throw new BookManagerException(Constants.FILE_NOT_FOUND + " :" + e.getMessage());
         }
     }
 }
