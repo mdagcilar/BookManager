@@ -12,6 +12,14 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
+/**
+ * BookManagerTest
+ *
+ * @author Metin Dagcilar
+ * @version 1.0
+ * @since 2018-04-03
+ */
+
 public class BookManagerTest {
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(BookManagerImplTest.class);
@@ -37,13 +45,13 @@ public class BookManagerTest {
     /**
      * Tests the single threaded implementation vs the parallel version to see if the results are the same
      *
-     * @throws BookManagerException
+     * @throws BookManagerException -
      */
     @Test
     public void findTopThreeWordsTuring() throws BookManagerException {
-        List<Map.Entry<String, Integer>> topThree = bookManagerImpl.getTopThreeWords(Constants.TURING_FILE);
+        List<Map.Entry<String, Integer>> topThree = bookManagerImpl.getTopThreeWords(Constants.TURING_FILE, false);
 
-        List<Map.Entry<String, Integer>> topThreeParallel = bookManagerParallel.getTopThreeWords(Constants.TURING_FILE);
+        List<Map.Entry<String, Integer>> topThreeParallel = bookManagerParallel.getTopThreeWords(Constants.TURING_FILE, false);
 
         assertTrue(topThree.equals(topThreeParallel));
     }

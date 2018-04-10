@@ -7,6 +7,20 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
+
+/**
+ * BookManagerParallelTest
+ *
+ * @author Metin Dagcilar
+ * @version 1.0
+ * @since 2018-04-03
+ */
+
 public class BookManagerParallelTest {
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(BookManagerParallelTest.class);
@@ -32,11 +46,17 @@ public class BookManagerParallelTest {
     //TODO
     @Test
     public void findTopThreeWords() throws BookManagerException {
-        bookManagerParallel.getTopThreeWords(Constants.TURING_FILE);
+        List<Map.Entry<String, Integer>> expectedTopThree = new ArrayList<>();
+        expectedTopThree.add(new java.util.AbstractMap.SimpleEntry<>("the", 732));
+        expectedTopThree.add(new java.util.AbstractMap.SimpleEntry<>("of", 446));
+        expectedTopThree.add(new java.util.AbstractMap.SimpleEntry<>("to", 421));
+
+        List<Map.Entry<String, Integer>> topThree = bookManagerParallel.getTopThreeWords(Constants.TURING_FILE, false);
+        assertTrue(topThree.equals(expectedTopThree));
     }
 
     @Test(expected = BookManagerException.class)
     public void fileDoesNotExist() throws BookManagerException {
-        bookManagerParallel.getTopThreeWords("nosuchfile");
+        bookManagerParallel.getTopThreeWords("nosuchfile", false);
     }
 }

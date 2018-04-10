@@ -38,7 +38,7 @@ public class BookManagerParallel implements BookManager {
      *
      * @param filePath - path to the file
      */
-    public List<Map.Entry<String, Integer>> getTopThreeWords(String filePath) throws BookManagerException {
+    public List<Map.Entry<String, Integer>> getTopThreeWords(String filePath, boolean printToFile) throws BookManagerException {
         long populateTimeStart = Instant.now().toEpochMilli();
         wordCountMap = new HashMap<>();
         wordCountMap = readFile(filePath);
@@ -54,7 +54,7 @@ public class BookManagerParallel implements BookManager {
 
         long totalTime = (populateTimeEnd - populateTimeStart) + (filterTimeEnd - filterTimeStart);
         displayManager.printTopThreeWords(topThreeWordsList, totalTime,
-                (filterTimeStart - filterTimeEnd), (populateTimeStart - populateTimeEnd), true);
+                (filterTimeEnd - filterTimeStart), (populateTimeEnd - populateTimeStart), printToFile);
 
         return topThreeWordsList;
     }
@@ -95,28 +95,28 @@ public class BookManagerParallel implements BookManager {
      * @param filePath - path to file
      * @return Map of <Word, Count>
      */
-    private Map<String, Integer> readFile_2(String filePath) throws BookManagerException {
-        Path path = Paths.get(filePath);
-
-        try {
-            Files.readAllLines(path, StandardCharsets.ISO_8859_1)
-                    .parallelStream()                                                               // Start streaming the lines
-                    .map(line -> line.toLowerCase().replaceAll("[^a-z]+", " "))   // Split line into individual words
-                    .collect(Collectors.toConcurrentMap(line -> line, count -> 1, Integer::sum))
-                    .forEach((line, count) -> {
-                        String[] wordsFromLine = line.split("\\s");
-                        for (String word : wordsFromLine) {
-                            if (wordCountMap.containsKey(word)) {
-                                wordCountMap.put(word, wordCountMap.get(word) + 1);                 // get word and increment counter
-                            } else {
-                                wordCountMap.put(word, 1);                                          // insert new word into the HashMap
-                            }
-                        }
-                    });
-            return wordCountMap;
-        } catch (IOException e) {
-            logger.error(Constants.FILE_NOT_FOUND + e.getMessage());
-            throw new BookManagerException(Constants.FILE_NOT_FOUND + " :" + e.getMessage());
-        }
-    }
+//    private Map<String, Integer> readFile_2(String filePath) throws BookManagerException {
+//        Path path = Paths.get(filePath);
+//
+//        try {
+//            Files.readAllLines(path, StandardCharsets.ISO_8859_1)
+//                    .parallelStream()                                                               // Start streaming the lines
+//                    .map(line -> line.toLowerCase().replaceAll("[^a-z]+", " "))   // Split line into individual words
+//                    .collect(Collectors.toConcurrentMap(line -> line, count -> 1, Integer::sum))
+//                    .forEach((line, count) -> {
+//                        String[] wordsFromLine = line.split("\\s");
+//                        for (String word : wordsFromLine) {
+//                            if (wordCountMap.containsKey(word)) {
+//                                wordCountMap.put(word, wordCountMap.get(word) + 1);                 // get word and increment counter
+//                            } else {
+//                                wordCountMap.put(word, 1);                                          // insert new word into the HashMap
+//                            }
+//                        }
+//                    });
+//            return wordCountMap;
+//        } catch (IOException e) {
+//            logger.error(Constants.FILE_NOT_FOUND + e.getMessage());
+//            throw new BookManagerException(Constants.FILE_NOT_FOUND + " :" + e.getMessage());
+//        }
+//    }
 }

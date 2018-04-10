@@ -33,7 +33,7 @@ public class BookManagerImpl implements BookManager {
      *
      * @param filePath - path to the file
      */
-    public List<Map.Entry<String, Integer>> getTopThreeWords(String filePath) throws BookManagerException {
+    public List<Map.Entry<String, Integer>> getTopThreeWords(String filePath, boolean printToFile) throws BookManagerException {
         long populateTimeStart = Instant.now().toEpochMilli();
         wordCountMap = new HashMap<>();
         wordCountMap = readFile(filePath);
@@ -44,12 +44,11 @@ public class BookManagerImpl implements BookManager {
                 .sorted(Comparator.comparing(Map.Entry::getValue, reverseOrder()))
                 .limit(3)
                 .collect(Collectors.toList());
-
         long filterTimeEnd = Instant.now().toEpochMilli();
 
         long totalTime = (populateTimeEnd - populateTimeStart) + (filterTimeEnd - filterTimeStart);
         displayManager.printTopThreeWords(topThreeWordsList, totalTime,
-                (filterTimeStart - filterTimeEnd), (populateTimeStart - populateTimeEnd), true);
+                (filterTimeEnd - filterTimeStart), (populateTimeEnd - populateTimeStart), printToFile);
 
         return topThreeWordsList;
     }

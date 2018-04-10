@@ -1,15 +1,12 @@
 package com.m3c.md.view;
 
+import com.m3c.md.model.BookManagerParallel;
 import com.m3c.md.model.Constants;
+import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.time.Instant;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.reverseOrder;
 
 /**
  * DisplayManager
@@ -21,6 +18,7 @@ import static java.util.Collections.reverseOrder;
 
 public class DisplayManager {
 
+    private static org.apache.log4j.Logger logger = Logger.getLogger(BookManagerParallel.class);
     private PrintStream printStream;
 
     /**
@@ -31,20 +29,19 @@ public class DisplayManager {
      * @param filterTime        - time taken to filter the HashMap
      * @param outResultsToFile  - flag, whether to print output to a file
      */
-    public void printTopThreeWords(List<Map.Entry<String, Integer>> topThreeWordsList, long populateTime, long filterTime,
-                                   long totalTime, boolean outResultsToFile) {
+    public void printTopThreeWords(List<Map.Entry<String, Integer>> topThreeWordsList,
+                                   long totalTime, long populateTime, long filterTime, boolean outResultsToFile) {
 
         if (outResultsToFile) changeOutputStreamToFile();
 
-        System.out.println("Time taken to populate HashMap with all words: " + populateTime);
-        System.out.println("Time taken to get the top 3 words: " + filterTime);
+        System.out.println("Total time taken: (" + totalTime + "ms), populate the HashMap (" + populateTime + "ms), " +
+                "get the top 3 words (" + filterTime + "ms)");
+        System.out.println("The top 3 words: ");
 
-        System.out.println("Total time taken: " + totalTime);
-
-        System.out.println("\nThe top 3 words: ");
         for (Map.Entry entry : topThreeWordsList) {
             System.out.println(entry.getKey() + " -> " + entry.getValue());
         }
+        System.out.println();
     }
 
 
@@ -61,7 +58,7 @@ public class DisplayManager {
             printStream = new PrintStream(new FileOutputStream(fileOutput), true);
             System.setOut(printStream);
         } catch (FileNotFoundException e) {
-            System.out.println(fileOutput + " not found " + e.getMessage());
+            logger.error(fileOutput + " not found " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -89,6 +86,7 @@ public class DisplayManager {
             try {
                 bufferedReader.close();
             } catch (IOException e) {
+                logger.error("IO Exception " + e.getMessage());
                 e.printStackTrace();
             }
         }

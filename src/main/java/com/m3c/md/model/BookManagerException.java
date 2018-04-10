@@ -10,7 +10,7 @@ package com.m3c.md.model;
 
 public class BookManagerException extends Exception {
 
-    public BookManagerException(String message) {
+    BookManagerException(String message) {
         super(message);
     }
 }

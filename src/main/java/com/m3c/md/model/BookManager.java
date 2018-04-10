@@ -13,5 +13,5 @@ import java.util.Map;
 
 public interface BookManager {
 
-    List<Map.Entry<String, Integer>> getTopThreeWords(String exampleFile) throws BookManagerException;
+    List<Map.Entry<String, Integer>> getTopThreeWords(String exampleFile, boolean printToFile) throws BookManagerException;
 }

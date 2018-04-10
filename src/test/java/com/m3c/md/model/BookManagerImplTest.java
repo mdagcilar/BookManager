@@ -9,9 +9,17 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * BookManagerImplTest
+ *
+ * @author Metin Dagcilar
+ * @version 1.0
+ * @since 2018-04-03
+ */
 
 public class BookManagerImplTest {
 
@@ -38,18 +46,21 @@ public class BookManagerImplTest {
      * Tests the findTopThreeWords() method against a known test file, to check whether the
      * correct 3 words are returned and their correct number of occurrences.
      *
-     * @throws BookManagerException
+     * @throws BookManagerException -
      */
     @Test
     public void findTopThreeWords() throws BookManagerException {
-        List<Map.Entry<String, Integer>> expectedTopThree;
+        List<Map.Entry<String, Integer>> expectedTopThree = new ArrayList<>();
+        expectedTopThree.add(new java.util.AbstractMap.SimpleEntry<>("the", 732));
+        expectedTopThree.add(new java.util.AbstractMap.SimpleEntry<>("of", 446));
+        expectedTopThree.add(new java.util.AbstractMap.SimpleEntry<>("to", 421));
 
-        List<Map.Entry<String, Integer>> topThree = bookManager.getTopThreeWords(Constants.TURING_FILE);
-//        assertTrue(topThree.equals(expectedTopThree));
+        List<Map.Entry<String, Integer>> topThree = bookManager.getTopThreeWords(Constants.TURING_FILE, false);
+        assertTrue(topThree.equals(expectedTopThree));
     }
 
     @Test(expected = BookManagerException.class)
     public void fileDoesNotExist() throws BookManagerException {
-        bookManager.getTopThreeWords("nosuchfile");
+        bookManager.getTopThreeWords("nosuchfile", false);
     }
 }
