@@ -30,7 +30,7 @@ public class DisplayManager {
      * @param outResultsToFile  - flag, whether to print output to a file
      */
     public void printTopThreeWords(List<Map.Entry<String, Integer>> topThreeWordsList,
-                                   long totalTime, long populateTime, long filterTime, boolean outResultsToFile) {
+                                   long totalTime, long filterTime, long populateTime,  boolean outResultsToFile) {
 
         if (outResultsToFile) changeOutputStreamToFile();
 

@@ -6,7 +6,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 public class Starter {
 
-    private final String filePath = Constants.TURING_FILE;
+    private final String filePath = Constants.A_LARGE_FILE; // path to file
 
     public static void main(String[] args) {
         Starter starter = new Starter();
